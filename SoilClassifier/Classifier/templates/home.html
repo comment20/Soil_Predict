@@ -1,0 +1,177 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Soil Classifier</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <div class="header">Classifier un type de sol</div>
+    <div class="form-card">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="preview-container">
+                <img id="img-preview" class="image-preview" src="#" alt="Aperçu de l'image"/>
+            </div>
+            {{ form.as_p }}
+            <button type="submit">Prédire</button>
+        </form>
+    </div>
+    <script>
+        // Affiche l'aperçu de l'image sélectionnée
+        document.querySelector('input[type="file"]').addEventListener('change', function(event) {
+            const [file] = event.target.files;
+            const preview = document.getElementById('img-preview');
+            if (file) {
+                preview.src = URL.createObjectURL(file);
+                preview.style.display = "block";
+            } else {
+                preview.src = "#";
+                preview.style.display = "none";
+            }
+        });
+    </script>
+</body>
+  <style>
+
+body {
+    background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.header {
+    margin-top: 50px;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #2d6cdf;
+    text-shadow: 0 2px 8px #b3c6ff60;
+    animation: fadeInDown 1s;
+    letter-spacing: 2px;
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-40px);}
+    to { opacity: 1; transform: translateY(0);}
+}
+
+.form-card {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 8px 32px #2d6cdf22;
+    padding: 2.5rem 2rem;
+    margin: 2rem 0;
+    width: 100%;
+    max-width: 420px;
+    animation: fadeInUp 1s;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(40px);}
+    to { opacity: 1; transform: translateY(0);}
+}
+
+input[type="file"] {
+    display: block;
+    margin: 1.5rem auto 1rem auto;
+    font-size: 1rem;
+}
+
+button, input[type="submit"] {
+    background: linear-gradient(90deg, #2d6cdf 60%, #5ee7df 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.8rem 2.2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 8px #2d6cdf33;
+    transition: background 0.3s, transform 0.2s;
+    margin-top: 1rem;
+    animation: pulseBtn 1.2s infinite alternate;
+}
+
+@keyframes pulseBtn {
+    from { box-shadow: 0 2px 8px #2d6cdf33;}
+    to { box-shadow: 0 4px 16px #5ee7df66;}
+}
+
+button:hover, input[type="submit"]:hover {
+    background: linear-gradient(90deg, #5ee7df 0%, #2d6cdf 100%);
+    transform: scale(1.05);
+}
+
+@media (max-width: 600px) {
+    .form-card {
+        padding: 1.2rem 0.5rem;
+        max-width: 98vw;
+    }
+    .header {
+        font-size: 1.5rem;
+    }
+}   
+
+
+.preview-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 1.2rem;
+        }
+        .image-preview {
+            max-width: 220px;
+            max-height: 180px;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px #2d6cdf22;
+            margin-bottom: 0.7rem;
+            display: none;
+            object-fit: cover;
+        }
+
+
+
+
+
+        .form-card label {
+    display: block;
+    text-align: center;
+    font-size: 1.1rem;
+    color: #2d6cdf;
+    font-weight: 600;
+    margin-bottom: 0.7rem;
+    letter-spacing: 1px;
+}
+
+.custom-file-input {
+    display: block;
+    margin: 0 auto 1.2rem auto;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #2d6cdf44;
+    background: #f7faff;
+    font-size: 1rem;
+    transition: border 0.3s;
+}
+
+.custom-file-input:focus {
+    border: 1.5px solid #2d6cdf;
+    outline: none;
+}
+
+
+
+.form-card button, 
+.form-card input[type="submit"] {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+</style>  
+</html>

@@ -1,0 +1,86 @@
+[
+  {
+    "timestamp": "2025-07-29T13:29:24.870929",
+    "image": "2.jpg",
+    "soil_type": "Black_Soil",
+    "confidence": 99.16
+  },
+  {
+    "timestamp": "2025-07-29T14:59:11.754894",
+    "image": "6.jpg",
+    "soil_type": "ALLUVIAL_Soil",
+    "confidence": 60.87
+  },
+  {
+    "timestamp": "2025-07-29T15:33:05.138146",
+    "image": "4.jpg",
+    "soil_type": "ALLUVIAL_Soil",
+    "confidence": 90.19
+  },
+  {
+    "timestamp": "2025-07-29T15:53:07.374114",
+    "image": "4.jpg",
+    "soil_type": "ALLUVIAL_Soil",
+    "confidence": 90.19
+  },
+  {
+    "timestamp": "2025-07-29T17:42:18.254853",
+    "image": "2.jpg",
+    "soil_type": "ALLUVIAL_Soil",
+    "confidence": 94.28
+  },
+  {
+    "timestamp": "2025-07-30T14:13:08.553395",
+    "image": "4.jpg",
+    "soil_type": "ALLUVIAL_Soil",
+    "confidence": 90.19
+  },
+  {
+    "timestamp": "2025-07-30T14:19:06.241686",
+    "image": "images (1).jpeg",
+    "soil_type": "Black_Soil",
+    "confidence": 48.13
+  },
+  {
+    "timestamp": "2025-07-30T14:21:47.669293",
+    "image": "t\u00e9l\u00e9chargement.jpeg",
+    "soil_type": "Clay_Soil",
+    "confidence": 98.96
+  },
+  {
+    "timestamp": "2025-07-30T14:33:22.734960",
+    "image": "Black_1.jpg",
+    "soil_type": "Black_Soil",
+    "confidence": 99.97
+  },
+  {
+    "timestamp": "2025-07-30T14:37:04.362687",
+    "image": "8.jpg",
+    "soil_type": "RED_Soil",
+    "confidence": 99.97
+  },
+  {
+    "timestamp": "2025-07-30T20:39:02.124010",
+    "image": "Black_1.jpg",
+    "soil_type": "Black_Soil",
+    "confidence": 99.97
+  },
+  {
+    "timestamp": "2025-07-30T20:39:23.457084",
+    "image": "8.jpg",
+    "soil_type": "RED_Soil",
+    "confidence": 99.97
+  },
+  {
+    "timestamp": "2025-07-31T16:47:48.952982",
+    "image": "8.jpg",
+    "soil_type": "RED_Soil",
+    "confidence": 99.97
+  },
+  {
+    "timestamp": "2025-07-31T16:51:45.444633",
+    "image": "t\u00e9l\u00e9chargement.jpeg",
+    "soil_type": "Clay_Soil",
+    "confidence": 98.96
+  }
+]
