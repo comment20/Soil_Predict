@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<head>
+    <link rel="stylesheet" href="{% static 'his.css' %}">
+    <title>Historique des Prédictions</title>
+</head>
+
+<div class="history-container">
+    <h1>Historique des Prédictions</h1>
+    {% if history %}
+        <div class="export-options" style="text-align: right; margin-bottom: 20px;">
+            <a href="{% url 'export_history_csv' %}" class="export-btn"><i class="fas fa-file-csv"></i> Télécharger CSV</a>
+            <a href="{% url 'export_history_pdf' %}" class="export-btn" style="margin-left: 10px;"><i class="fas fa-file-pdf"></i> Télécharger PDF</a>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date et Heure</th>
+                        <th>Nom de l'image</th>
+                        <th>Type de sol prédit</th>
+                        <th>Confiance</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for prediction in history %}
+                        <tr>
+                            <td>{{ prediction.timestamp|date:"d/m/Y H:i" }}</td>
+                            <td>{{ prediction.image_name }}</td>
+                            <td>{{ prediction.soil_type }}</td>
+                            <td>{{ prediction.confidence|floatformat:2 }}%</td>
+                            <td>
+                                <form action="{% url 'delete_prediction' prediction.id %}" method="post" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="delete-btn" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette prédiction ?');">
+                                        🗑️
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p>Aucun historique de prédiction n'est disponible pour le moment.</p>
+    {% endif %}
+</div>
+{% endblock %}

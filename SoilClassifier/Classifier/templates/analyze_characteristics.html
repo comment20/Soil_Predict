@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="analysis-page-wrapper">
+    <div class="form-container">
+        <h2>Entrez les caractéristiques du sol</h2>
+        <form method="POST" action="{% url 'analyze_characteristics' %}">
+            {% csrf_token %}
+            <div class="form-grid">
+                {{ form.as_p }}
+            </div>
+            <button type="submit">Lancer l'analyse</button>
+        </form>
+    </div>
+</div>
+
+<style>
+    /* Ce conteneur agira comme notre "body" pour le style de cette page */
+    .analysis-page-wrapper {
+        background: url("{% static 'font2.jpg' %}") no-repeat center center fixed;
+        background-size: cover;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 50px 0;
+    }
+
+    .form-container {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 40px;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        max-width: 800px;
+        width: 90%;
+        text-align: center;
+    }
+
+    .form-container h2 {
+        color: #2c5e3f;
+        margin-bottom: 30px;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px 30px;
+        text-align: left;
+    }
+
+    .form-grid p {
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-grid label {
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #333;
+    }
+
+    .form-grid input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 1rem;
+        box-sizing: border-box;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .form-grid input:focus {
+        outline: none;
+        border-color: #4CAF50;
+        box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+    }
+
+    button[type="submit"] {
+        margin-top: 30px;
+        padding: 15px 40px;
+        background-color: #4CAF50;
+        color: white;
+        font-size: 1.1rem;
+        font-weight: bold;
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #45a049;
+        transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+        .form-container {
+            padding: 25px;
+        }
+        .analysis-page-wrapper {
+            padding: 20px 0;
+        }
+    }
+</style>
+{% endblock %}

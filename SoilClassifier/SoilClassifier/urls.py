@@ -19,10 +19,14 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from Classifier.api_views import SoilPredictAPI, CropPredictAPI
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('Classifier.urls')),
+    path('chatbot/', include('Chatbot.urls')), # New: Include Chatbot URLs
+    path('api/predict/', SoilPredictAPI.as_view()),
+    path('api/crop-predict/', CropPredictAPI.as_view()),
     
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

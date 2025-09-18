@@ -7,8 +7,13 @@ from rest_framework import status
 from .soil_model_loader import predict_soil
 from .models import Prediction
 from datetime import datetime
+import pickle
+import numpy as np
 
-last_prediction = {}
+# Variable pour la dernière prédiction de SOL
+last_soil_prediction = {}
+# Fichier pour la dernière prédiction de CULTURE
+CROP_PREDICTION_FILE = os.path.join(settings.BASE_DIR, "last_crop_prediction.json")
 
 class SoilPredictAPI(APIView):
     def post(self, request, *args, **kwargs):
@@ -31,18 +36,18 @@ class SoilPredictAPI(APIView):
             "confidence": round(confidence , 2)
         }
 
-        # 1️⃣ Sauvegarde en mémoire
-        global last_prediction
-        last_prediction = result
+        # Sauvegarde en mémoire
+        global last_soil_prediction
+        last_soil_prediction = result
 
-        # 2️⃣ Sauvegarde en base de données
+        # Sauvegarde en base de données
         Prediction.objects.create(
             image_name=image.name,
             soil_type=label,
             confidence=result["confidence"]
         )
 
-        # 3️⃣ Sauvegarde dans un fichier JSON
+        # Sauvegarde dans un fichier JSON
         json_path = os.path.join(settings.BASE_DIR, "prediction_history.json")
         if os.path.exists(json_path):
             with open(json_path, "r") as f:
@@ -63,6 +68,64 @@ class SoilPredictAPI(APIView):
         return Response(result)
 
     def get(self, request, *args, **kwargs):
-        if not last_prediction:
-            return Response({"message": "Aucune prédiction disponible."}, status=404)
-        return Response(last_prediction)
+        if not last_soil_prediction:
+            return Response({"message": "Aucune prédiction de sol disponible."}, status=404)
+        return Response(last_soil_prediction)
+
+
+class CropPredictAPI(APIView):
+    def post(self, request, *args, **kwargs):
+        # 1. Valider les données d'entrée
+        required_fields = ['temperature', 'ph', 'humidity', 'nitrogen', 'potassium', 'phosphorus', 'rainfall']
+        if not all(field in request.data for field in required_fields):
+            return Response({"error": "Données d'entrée manquantes"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # 2. Formater les données pour le modèle
+            data = request.data
+            input_data = np.array([[
+                data['temperature'],
+                data['ph'],
+                data['humidity'],
+                data['nitrogen'],
+                data['potassium'],
+                data['phosphorus'],
+                data['rainfall']
+            ]])
+        except (TypeError, ValueError):
+            return Response({"error": "Données d'entrée invalides"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # 3. Charger le modèle et prédire
+        model_path = os.path.join(settings.BASE_DIR, 'model.pkl')
+        try:
+            with open(model_path, 'rb') as file:
+                model = pickle.load(file)
+            
+            prediction = model.predict(input_data)
+            predicted_crop = prediction[0]
+
+            # 4. Retourner le résultat
+            result = {
+                "predicted_crop": predicted_crop
+            }
+
+            # Sauvegarde dans un fichier JSON
+            with open(CROP_PREDICTION_FILE, "w") as f:
+                json.dump(result, f)
+
+            return Response(result, status=status.HTTP_200_OK)
+
+        except FileNotFoundError:
+            return Response({"error": "Modèle de prédiction introuvable"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            return Response({"error": f"Erreur de prédiction : {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def get(self, request, *args, **kwargs):
+        try:
+            with open(CROP_PREDICTION_FILE, "r") as f:
+                last_prediction = json.load(f)
+            return Response(last_prediction)
+        except FileNotFoundError:
+            return Response({"message": "Aucune prédiction de culture disponible."}, status=404)
+
+    

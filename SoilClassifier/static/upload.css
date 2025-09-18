@@ -1,0 +1,208 @@
+/* upload.css */
+
+/* Polices et variables */
+:root {
+    --primary-color: #2c5e3f; /* Vert forêt */
+    --secondary-color: #f4a261; /* Orange sable */
+    --background-color: #fdfdfd;
+    --text-color: #333;
+    --font-family-heading: 'Montserrat', sans-serif;
+    --font-family-body: 'Open Sans', sans-serif;
+    --button-green: #4CAF50; /* Un vert plus vif pour le bouton */
+}
+
+/* Style de base */
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-family-body);
+    background: linear-gradient(to bottom right, #e0e7e9, #f0f2f5); /* Subtle gradient */
+    margin: 0;
+    color: var(--text-color);
+}
+
+.home-container {
+    font-family: var(--font-family-body);
+    color: var(--text-color);
+    background-color: var(--background-color);
+}
+
+section {
+    padding: 10px 20px;
+    text-align: center;
+}
+
+.hero-content {
+    text-align: center;
+    flex: 1;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.hero-title {
+    font-size: 2.5em; /* Adjusted for smaller screen */
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 0px;
+}
+
+.hero-subtitle {
+    font-size: 1.1em; /* Adjusted for smaller screen */
+    font-weight: 300;
+    max-width: 700px;
+    margin: 0px auto 10px auto;
+    color: #555;
+    letter-spacing: 0.05em;
+    line-height: 1.4;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Formulaire d'upload */
+.home-form-card {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto; /* Center the form card */
+}
+
+.preview-container {
+    width: 100%;
+    min-height: 120px;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    margin: 0 auto 10px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f9f9f9;
+    overflow: hidden;
+}
+
+.image-preview, #video-element {
+    max-width: 100%;
+    max-height: 150px;
+    display: none;
+    border-radius: 6px;
+}
+
+/* Cache l'input de fichier par défaut */
+input[type="file"] {
+    display: none;
+}
+
+.upload-options {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.upload-label, #start-camera-btn { /* Combined for common styles */
+    display: flex; /* Use flex for icon and text alignment */
+    flex-direction: column; /* Stack icon and text vertically */
+    align-items: center;
+    padding: 10px 20px; /* Increased padding */
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s, color 0.3s;
+    border: 2px solid var(--primary-color); /* Border for ghost effect */
+    font-size: 1em;
+    background-color: transparent;
+    color: var(--primary-color);
+    flex: 1; /* Distribute space evenly */
+    text-align: center;
+}
+
+.upload-label:hover, #start-camera-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.icon-wrapper {
+    margin-bottom: 5px; /* Space between icon and text */
+}
+
+.icon-wrapper svg {
+    width: 40px; /* Larger icons */
+    height: 40px;
+    fill: var(--primary-color); /* Icon color */
+    transition: fill 0.3s ease;
+}
+
+.upload-label:hover .icon-wrapper svg, #start-camera-btn:hover .icon-wrapper svg {
+    fill: white; /* Change icon color on hover */
+}
+
+.capture-btn {
+    background-color: #e74c3c; /* Red for capture */
+    color: white;
+    display: inline-block;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: none;
+    font-size: 1em;
+}
+
+button[type="submit"] { /* This is the Analyser button */
+    background-color: var(--primary-color);
+    color: white;
+    width: 100%;
+    margin-top: 10px; /* Increased margin */
+    padding: 10px 20px; /* Increased padding */
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    border: none;
+}
+
+button[type="submit"]:hover {
+    background-color: #234a34; /* Slightly darker primary color */
+    transform: translateY(-2px);
+}
+
+/* Media Queries for responsiveness */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 1.8em; /* Adjusted for smaller screens */
+    }
+    .hero-subtitle {
+        font-size: 0.8em; /* Adjusted for smaller screens */
+    }
+    .home-form-card {
+        padding: 15px;
+        width: 90%;
+    }
+    .upload-options {
+        flex-direction: column;
+    }
+    .upload-label, #start-camera-btn {
+        width: 100%; /* Full width on small screens */
+        padding: 8px 15px;
+        box-sizing: border-box; /* Include padding in width */
+    }
+    .icon-wrapper svg {
+        width: 30px; /* Smaller icons */
+        height: 30px;
+    }
+    button[type="submit"] {
+        padding: 8px 15px;
+    }
+}
+
+.custom-upload-area.drag-over {
+    border-color: var(--secondary-color);
+    background-color: #e6f7ff; /* Light blue background */
+}

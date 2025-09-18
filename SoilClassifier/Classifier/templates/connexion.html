@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion & Inscription</title>
+    <link rel="stylesheet" href="{% static 'connexion.css' %}">
+</head>
+<body>
+    <div class="form-container">
+        <div class="logo-container">
+            <img src="{% static 'boval.jpg' %}" alt="Logo">
+        </div>
+
+        <div class="form-tabs">
+            <button class="tab-link active" data-form="login">Se connecter</button>
+            <button class="tab-link" data-form="signup">S'inscrire</button>
+        </div>
+
+        <!-- Formulaire de Connexion -->
+        <form id="login-form" class="form-content active" method="POST" action="{% url 'connexion' %}">
+            {% csrf_token %}
+            <p class="form-title">Bon retour parmi nous</p>
+            {{ login_form.username }}
+            {{ login_form.password }}
+            {% if login_form.non_field_errors %}
+                <div class="form-errors">{{ login_form.non_field_errors }}</div>
+            {% endif %}
+            <button type="submit">Se connecter</button>
+        </form>
+
+        <!-- Formulaire d'Inscription -->
+        <form id="signup-form" class="form-content" method="POST" action="{% url 'signup' %}">
+            {% csrf_token %}
+            <p class="form-title">Créer un nouveau compte</p>
+            {{ signup_form.username }}
+            {{ signup_form.email }}
+            {{ signup_form.password1 }}
+            {{ signup_form.password2 }}
+            {% if signup_form.non_field_errors %}
+                <div class="form-errors">{{ signup_form.non_field_errors }}</div>
+            {% endif %}
+            <button type="submit">S'inscrire</button>
+        </form>
+    </div>
+
+    <script src="{% static 'connexion.js' %}"></script>
+</body>
+</html>

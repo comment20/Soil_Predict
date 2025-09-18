@@ -1,163 +1,66 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Résultat</title>
-    <link rel="stylesheet" href="{% static 'style.css' %}">
-    <script>
-        // Animation dynamique de la barre de confiance
-        window.onload = function() {
-            var bar = document.getElementById('confidence-bar');
-            bar.style.width = "{{ confidence }}%";
-        }
-    </script>
-</head>
-<body>
-    <div class="result-header">Résultat de la classification</div>
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'style3.css' %}">
+
+
+
+<div class="result-page-container">
     <div class="result-card">
-        <div class="result-label">Type de sol détecté :</div>
-        <div class="result-value">{{ soil_type }}</div>
-        <div class="result-label">Confiance :</div>
-        <div class="confidence-bar-container">
-            <div class="confidence-bar" id="confidence-bar" style="width:0"></div>
+        <h2 class="form-title">Résultats de l'Analyse</h2>
+
+        <div class="image-preview">
+            <img src="{{ image_url }}" alt="Image du sol analysé">
         </div>
-        <div style="text-align:center; font-size:1.1rem;">{{ confidence }}%</div>
-        <div class="result-label" style="margin-top:1.5rem;">Image analysée :</div>
-        <img src="{{ uploaded_image }}" alt="Image uploadée" class="result-image">
-        <a href="{% url 'home' %}">
-            <button class="result-btn">Revenir à l'accueil</button>
-        </a>
+
+        <div class="result-info">
+            <h3>Type de Sol Détecté</h3>
+            <p>{{ predicted_class }}</p>
+        </div>
+
+        <div class="probability-section">
+            <h3>Probabilité</h3>
+            <div class="progress-circle" style="--p:{{ probability_percentage|floatformat:0 }};">
+                <div class="progress-value" data-goal="{{ probability_percentage|floatformat:2 }}">0%</div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a href="{% url 'upload_image' %}" class="btn-new-analysis">Nouvelle Analyse</a>
+        </div>
     </div>
-    <style> 
-body {
-    background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
-    font-family: 'Segoe UI', Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
 
-.result-header {
-    margin-top: 40px;
-    font-size: 2.3rem;
-    font-weight: bold;
-    color: #2d6cdf;
-    text-shadow: 0 2px 8px #b3c6ff60;
-    animation: fadeInDown 1s;
-    letter-spacing: 2px;
-    text-align: center;
-}
+    <!-- Le nouveau bouton -->
+    <a href="{% url 'analyze_characteristics' %}" class="floating-char-btn">Analyse_caracteristique</a>
 
-@keyframes fadeInDown {
-    from { opacity: 0; transform: translateY(-40px);}
-    to { opacity: 1; transform: translateY(0);}
-}
+</div>
 
-.result-card {
-    background: #fff;
-    border-radius: 18px;
-    box-shadow: 0 8px 32px #2d6cdf22;
-    padding: 2.5rem 2rem;
-    margin: 2rem 0;
-    width: 100%;
-    max-width: 420px;
-    animation: fadeInUp 1s;
-}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const progressValue = document.querySelector('.progress-value');
+    const finalValue = parseFloat(progressValue.getAttribute('data-goal'));
+    const animationDuration = 1500; // in milliseconds
 
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(40px);}
-    to { opacity: 1; transform: translateY(0);}
-}
+    let startTime = null;
 
-.result-label {
-    font-size: 1.1rem;
-    color: #2d6cdf;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    letter-spacing: 1px;
-    text-align: center;
-}
+    function animateCounter(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const progress = timestamp - startTime;
+        const percentage = Math.min(progress / animationDuration, 1);
+        const currentValue = percentage * finalValue;
 
-.result-value {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #222;
-    text-align: center;
-    margin-bottom: 0.5rem;
-    animation: pulse 1.2s infinite alternate;
-}
+        progressValue.textContent = currentValue.toFixed(2) + '%';
 
-@keyframes pulse {
-    from { color: #2d6cdf;}
-    to { color: #5ee7df;}
-}
-
-.confidence-bar-container {
-    width: 100%;
-    background: #e0eafc;
-    border-radius: 8px;
-    margin: 1rem 0;
-    height: 18px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px #2d6cdf22;
-}
-
-.confidence-bar {
-    height: 100%;
-    background: linear-gradient(90deg, #2d6cdf 60%, #5ee7df 100%);
-    border-radius: 8px 0 0 8px;
-    transition: width 1s cubic-bezier(.4,2,.6,1);
-}
-
-.result-image {
-    display: block;
-    margin: 1.5rem auto 1rem auto;
-    max-width: 220px;
-    border-radius: 12px;
-    box-shadow: 0 4px 24px #2d6cdf22;
-    animation: popIn 0.8s;
-}
-
-@keyframes popIn {
-    0% { transform: scale(0.7); opacity: 0;}
-    80% { transform: scale(1.1);}
-    100% { transform: scale(1); opacity: 1;}
-}
-
-.result-btn {
-    background: linear-gradient(90deg, #2d6cdf 60%, #5ee7df 100%);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 0.8rem 2.2rem;
-    font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: 0 2px 8px #2d6cdf33;
-    transition: background 0.3s, transform 0.2s;
-    margin-top: 1.5rem;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.result-btn:hover {
-    background: linear-gradient(90deg, #5ee7df 0%, #2d6cdf 100%);
-    transform: scale(1.05);
-}
-
-@media (max-width: 600px) {
-    .result-card {
-        padding: 1.2rem 0.5rem;
-        max-width: 98vw;
+        if (progress < animationDuration) {
+            requestAnimationFrame(animateCounter);
+        } else {
+            progressValue.textContent = finalValue.toFixed(2) + '%';
+        }
     }
-    .result-header {
-        font-size: 1.3rem;
-    }
-}    
-</style>    
-</body>
-</html>
+
+    requestAnimationFrame(animateCounter);
+});
+</script>
+
+{% endblock %}

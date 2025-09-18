@@ -1,11 +1,22 @@
 from django.urls import path
-from .views import home 
-# Import de la vue
-from .views import result
-from .api_views import SoilPredictAPI
+from . import views
 
 urlpatterns = [
-    path('', home, name='home'), 
-    path('result/', result, name='result'),# ✅ page d’accueil avec upload
-    path('api/predict/', SoilPredictAPI.as_view(), name='api_predict'),
+    path('', views.landing_page_view, name='landing'),
+    path('home/', views.home, name='home'),
+    path('upload-image/', views.upload_image_view, name='upload_image'),
+    path('my-history/', views.my_history, name='my_history'),
+    path('historique/', views.prediction_history, name='historique'),
+    path('export-csv/', views.export_history_csv, name='export_history_csv'),
+    path('export-pdf/', views.export_history_pdf, name='export_history_pdf'),
+    path('delete-prediction/<int:prediction_id>/', views.delete_prediction, name='delete_prediction'),
+    path('signup/', views.signup_view, name='signup'),
+    path('connexion/', views.login_view, name='connexion'),
+    path('api/dashboard-data/', views.dashboard_data, name='dashboard_data'),
+    path('api/crop-dashboard-data/', views.crop_dashboard_data, name='crop_dashboard_data'),
+    path('dashboard/', views.dashboard, name='dashboard'),
+    path('logout/', views.logout_view, name='logout'),
+    path('result/', views.result, name='result'),
+    path('analyze-characteristics/', views.analyze_characteristics_view, name='analyze_characteristics'),
+    path('crop-result/', views.crop_result_view, name='crop_result'),
 ]

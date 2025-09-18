@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'style3.css' %}">
+
+<div class="result-page-container">
+    <div class="result-card">
+        <h2 class="form-title">Culture Recommandée</h2>
+
+        <div class="result-info" style="margin-top: 40px; margin-bottom: 40px;">
+            <h3>La culture la plus adaptée pour votre sol est :</h3>
+            <p style="font-size: 2.5rem; color: #4CAF50; margin-top: 15px;">{{ predicted_crop }}</p>
+        </div>
+
+        <div class="form-actions">
+            <a href="{% url 'analyze_characteristics' %}" class="btn-new-analysis">Nouvelle Analyse</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,264 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<head>
+    <link rel="stylesheet" href="{% static 'upload.css' %}">
+    <title>Upload Image - Analyse de Sol Intelligente</title>
+</head>
+
+<div class="home-container">
+    <section id="upload-section">
+        <div class="hero-content">
+            <h1 class="hero-title">Uploader une image de sol</h1>
+            <p class="hero-subtitle">Choisissez une méthode pour fournir votre image.</p>
+
+            {% if error_message %}
+                <p style="color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; padding: .75rem 1.25rem; border: 1px solid transparent; border-radius: .25rem; text-align: center;">
+                    {{ error_message }}
+                </p>
+            {% endif %}
+            
+            <div class="home-form-card">
+                        <form method="post" enctype="multipart/form-data" id="upload-form">
+            {% csrf_token %}
+            <div class="preview-container">
+                <img id="img-preview" class="image-preview" src="#" alt="Aperçu de l'image" style="display:none;" />
+                <video id="video-element" autoplay style="display:none;"></video>
+                <div id="camera-view" style="display:none;">
+                    <button type="button" id="capture-btn" class="capture-btn">Capturer</button>
+                </div>
+            </div>
+            <div class="upload-options">
+                <label for="imageUpload" class="upload-label" id="imageUploadLabel">
+                    <div class="icon-wrapper">
+                        <svg fill="#000000" width="24" height="24" viewBox="0 0 24 24" id="upload-cloud" data-name="Line Color" xmlns="http://www.w3.org/2000/svg" class="icon line-color"><path id="secondary" d="M16,14l-4-4-4,4" style="fill: none; stroke: #2ca9bc; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></path><path id="primary" d="M12,10v9m0,3a9,9,0,0,1-5.21-16.5A6.49,6.49,0,0,1,12,2a6.49,6.49,0,0,1,5.21,3.5A9,9,0,0,1,12,22Z" style="fill: none; stroke: #000000; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></path></svg>
+                    </div>
+                    Importer une image
+                </label>
+                <button type="button" id="start-camera-btn" class="upload-label">
+                    <div class="icon-wrapper">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 6H17.82C17.4 4.84 16.28 4 15 4H9C7.72 4 6.6 4.84 6.18 6H3C2.45 6 2 6.45 2 7V19C2 19.55 2.45 20 3 20H21C21.55 20 22 19.55 22 19V7C22 6.45 21.55 6 21 6ZM12 17C9.24 17 7 14.76 7 12C7 9.24 9.24 7 12 7C14.76 7 17 9.24 17 12C17 14.76 14.76 17 12 17ZM12 9C10.34 9 9 10.34 9 12C9 13.66 10.34 15 12 15C13.66 15 15 13.66 15 12C15 10.34 13.66 9 12 9Z" fill="currentColor"/></svg>
+                    </div>
+                    Prendre une photo
+                </button>
+            </div>
+            {{ form.image }} <!-- This is the actual file input -->
+            <input type="hidden" id="latitude" name="latitude">
+            <input type="hidden" id="longitude" name="longitude">
+            <input type="hidden" id="location_name" name="location_name">
+            <button type="submit" class="upload-btn">Analyser</button>
+        </form>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("Script loaded and DOMContentLoaded fired.");
+
+    const imagePreview = document.getElementById('img-preview');
+    console.log('imagePreview:', imagePreview);
+
+    const videoElement = document.getElementById('video-element');
+    console.log('videoElement:', videoElement);
+
+    const startCameraBtn = document.getElementById('start-camera-btn');
+    console.log('startCameraBtn:', startCameraBtn);
+
+    const cameraView = document.getElementById('camera-view');
+    console.log('cameraView:', cameraView);
+
+    const captureBtn = document.getElementById('capture-btn');
+    console.log('captureBtn:', captureBtn);
+
+    const uploadOptions = document.querySelector('.upload-options');
+    console.log('uploadOptions:', uploadOptions);
+
+    const imageUploadLabel = document.getElementById('imageUploadLabel'); // Changed ID
+    console.log('imageUploadLabel:', imageUploadLabel);
+
+    // Get the form element first
+    const uploadForm = document.getElementById('upload-form');
+    console.log('uploadForm:', uploadForm);
+
+    let imageInput = null; // Initialize imageInput to null
+
+    if (uploadForm) {
+        // Get imageInput from within the form
+        imageInput = uploadForm.querySelector('#imageUpload'); // Changed ID
+        console.log('imageInput (from form query):', imageInput);
+    } else {
+        console.error("upload-form not found!");
+    }
+
+    let stream = null;
+
+    // --- 1. File Upload Preview ---
+    if (imageInput) {
+        imageInput.addEventListener('change', function(event) {
+            console.log('imageInput change event triggered.');
+            if (stream) {
+                stopCamera();
+            }
+            const [file] = event.target.files;
+            if (file) {
+                imagePreview.src = URL.createObjectURL(file);
+                imagePreview.style.display = 'block';
+                videoElement.style.display = 'none';
+            }
+        });
+    } else {
+        console.error("imageInput (imageUpload) not found or form not found!");
+    }
+
+
+    // --- Handle click on the styled label for file input ---
+    if (imageUploadLabel) { // Changed ID
+        imageUploadLabel.addEventListener('click', (event) => {
+            event.preventDefault(); // Empêche le comportement par défaut du label pour éviter un double-clic
+            console.log('imageUploadLabel click event triggered via JS.');
+            if (imageInput) {
+                imageInput.click(); // On déclenche manuellement le clic sur l'input de fichier
+            } else {
+                console.error("imageInput is null when imageUploadLabel is clicked."); // Changed ID
+            }
+        });
+    } else {
+        console.error("imageUploadLabel not found!"); // Changed ID
+    }
+
+
+    // --- 2. Camera Logic ---
+    if (startCameraBtn) {
+        startCameraBtn.addEventListener('click', async () => {
+            console.log('startCameraBtn click event triggered.');
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+                } catch (err) {
+                    console.error("Erreur d'accès à la caméra arrière: ", err);
+                    if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+                        alert("Aucune caméra arrière trouvée. Essai avec la caméra avant.");
+                        try {
+                            stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+                        } catch (frontErr) {
+                            console.error("Erreur d'accès à la caméra avant: ", frontErr);
+                            alert("Impossible d'accéder à la caméra (avant ou arrière). Vérifiez les permissions et la compatibilité de votre appareil.");
+                            return; // Exit if both fail
+                        }
+                    } else if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+                        alert("Accès à la caméra refusé. Veuillez autoriser l'accès dans les paramètres de votre navigateur.");
+                        return;
+                    } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
+                        alert("La caméra est déjà utilisée ou inaccessible. Veuillez fermer les autres applications utilisant la caméra.");
+                        return;
+                    } else if (err.name === 'OverconstrainedError' || err.name === 'ConstraintNotSatisfiedError') {
+                        alert("La caméra ne peut pas satisfaire les contraintes demandées (résolution, etc.).");
+                        return;
+                    } else {
+                        alert(`Erreur inconnue lors de l'accès à la caméra: ${err.name} - ${err.message}`);
+                        return;
+                    }
+                }
+
+                if (stream) {
+                    videoElement.srcObject = stream;
+                    videoElement.style.display = 'block';
+                    imagePreview.style.display = 'none';
+                    cameraView.style.display = 'block';
+                    uploadOptions.style.display = 'none'; // Hide choice buttons
+                }
+            } else {
+                alert("Votre navigateur ne supporte pas l'accès à la caméra.");
+            }
+        });
+    } else {
+        console.error("startCameraBtn not found!");
+    }
+
+
+    if (captureBtn) {
+        captureBtn.addEventListener('click', () => {
+            console.log('captureBtn click event triggered.');
+            const canvas = document.createElement('canvas');
+            canvas.width = videoElement.videoWidth;
+            canvas.height = videoElement.videoHeight;
+            const context = canvas.getContext('2d');
+            context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+            // Show captured image in preview
+            imagePreview.src = canvas.toDataURL('image/jpeg');
+            imagePreview.style.display = 'block';
+            
+            // Stop camera and hide video elements
+            stopCamera();
+
+            // Convert canvas to blob and update file input
+            if (imageInput) { // Check if imageInput is found before setting files
+                canvas.toBlob((blob) => {
+                    const file = new File([blob], "capture.jpg", { type: "image/jpeg" });
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    imageInput.files = dataTransfer.files;
+                }, 'image/jpeg');
+            } else {
+                console.error("imageInput (imageUpload) not found when captureBtn is clicked."); // Changed ID
+            }
+        });
+    } else {
+        console.error("captureBtn not found!");
+    }
+
+
+    function stopCamera() {
+        console.log('stopCamera function called.');
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+        }
+        videoElement.style.display = 'none';
+        cameraView.style.display = 'none';
+        uploadOptions.style.display = 'flex'; // Show choice buttons again
+        stream = null;
+    }
+
+    // Drag and Drop functionality
+    const customUploadArea = document.querySelector('.upload-options'); // Use upload-options as the drop zone
+
+    if (customUploadArea) {
+        customUploadArea.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            customUploadArea.classList.add('drag-over');
+        });
+
+        customUploadArea.addEventListener('dragleave', (event) => {
+            event.preventDefault();
+            customUploadArea.classList.remove('drag-over');
+        });
+
+        customUploadArea.addEventListener('drop', (event) => {
+            event.preventDefault();
+            customUploadArea.classList.remove('drag-over');
+
+            const files = event.dataTransfer.files;
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.type.startsWith('image/')) {
+                    // Update the hidden file input
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    imageInput.files = dataTransfer.files;
+
+                    // Trigger the change event on the input to update preview
+                    const changeEvent = new Event('change', { bubbles: true });
+                    imageInput.dispatchEvent(changeEvent);
+                } else {
+                    alert("Veuillez déposer un fichier image valide.");
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

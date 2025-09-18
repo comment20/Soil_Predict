@@ -31,7 +31,9 @@ SECRET_KEY = 'hs3_!)du%3)*v4!^!81+!f4#g8j+&#u(z!**z7g3h6mvt7ims+'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.81.226']
+
+CSRF_TRUSTED_ORIGINS = ['http://192.168.79.226:8000']
 
 
 # Application definition
@@ -45,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Classifier',  # Assurez-vous que l'application Classifier est ajoutée i
     'rest_framework',  # Ajout de Django REST Framework pour l'API
+    'Chatbot',
 ]
 
 MIDDLEWARE = [
@@ -124,5 +127,16 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
+
+# Configuration de la session
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_SECURE = False # Important pour le développement (HTTP)
+
+# Configuration du stockage des messages
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+
+# URL de redirection après connexion
+LOGIN_REDIRECT_URL = '/home/'  # Redirige vers la page d'accueil
+LOGIN_URL = 'connexion'      # La page de connexion est maintenant la racine du site
 
 
